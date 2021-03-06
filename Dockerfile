@@ -11,12 +11,17 @@ LABEL author="Michael Parker" maintainer="parker@pterodactyl.io"
 RUN dpkg --add-architecture i386 \
  && apt update -y \
  && apt install -y --no-install-recommends libntlm0 winbind xvfb xauth python3 libncurses5:i386 libncurses6:i386
+ && apt-add-repository non-free
 
 # Install winehq-stable and with recommends
 RUN wget -qO - https://dl.winehq.org/wine-builds/winehq.key | apt-key add - \
  && apt-add-repository https://dl.winehq.org/wine-builds/debian/ \
  && wget -O- -q https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_10/Release.key | apt-key add - \
- && echo "deb http://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_10 ./" | tee /etc/apt/sources.list.d/wine-obs.list \
+ && curl -L https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_10/i386/libfaudio0_20.01-0~buster_i386.deb > libfaudio0_20.01-0~buster_i386.deb \
+ && curl -L https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_10/amd64/libfaudio0_20.01-0~buster_amd64.deb > libfaudio0_20.01-0~buster_amd64.deb \
+ && dpkg -i --force-depends libfaudio0_20.01-0~buster_i386.deb \
+ && dpkg -i --force-depends libfaudio0_20.01-0~buster_amd64.deb \
+ && apt install -f -y  \
  && apt-get update \
  && apt install -y --install-recommends winehq-stable
 
